@@ -82,7 +82,7 @@ class Scrapper:
         burgers = self.read_page(url, location)
         if burgers:
             for burger in burgers:
-                self.data.insert_item(burger['burger_name'], burger['description'])
+                self.data.insert_item(burger['burger_name'], burger['description'], burger['category'])
                 pp.pprint(burger)
         else:
             print('No burgers found.')

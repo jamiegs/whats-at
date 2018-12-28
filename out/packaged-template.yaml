@@ -1,0 +1,102 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Parses websites and notifies people of favorites
+Mappings:
+  RegionMap:
+    ap-northeast-1:
+      S3hostedzoneID: Z2M4EHUR26P7ZW
+      websiteendpoint: s3-website-ap-northeast-1.amazonaws.com
+    ap-southeast-1:
+      S3hostedzoneID: Z3O0J2DXBE1FTB
+      websiteendpoint: s3-website-ap-southeast-1.amazonaws.com
+    ap-southeast-2:
+      S3hostedzoneID: Z1WCIGYICN2BYD
+      websiteendpoint: s3-website-ap-southeast-2.amazonaws.com
+    eu-west-1:
+      S3hostedzoneID: Z1BKCTXD74EZPE
+      websiteendpoint: s3-website-eu-west-1.amazonaws.com
+    sa-east-1:
+      S3hostedzoneID: Z31GFT0UA1I2HV
+      websiteendpoint: s3-website-sa-east-1.amazonaws.com
+    us-east-1:
+      S3hostedzoneID: Z3AQBSTGFYJSTF
+      websiteendpoint: s3-website-us-east-1.amazonaws.com
+    us-west-1:
+      S3hostedzoneID: Z2F56UZL2M1ACD
+      websiteendpoint: s3-website-us-west-1.amazonaws.com
+    us-west-2:
+      S3hostedzoneID: Z3BJ6K6RIION7M
+      websiteendpoint: s3-website-us-west-2.amazonaws.com
+Outputs:
+  WebsiteURL:
+    Description: URL for website hosted on S3
+    Value:
+      Fn::GetAtt:
+      - RootBucket
+      - WebsiteURL
+Parameters:
+  Branch:
+    Type: String
+  EnvironmentPrefix:
+    Type: String
+  RootDomainName:
+    Description: Domain name for your website (example.com)
+    Type: String
+Resources:
+  RootBucket:
+    Properties:
+      AccessControl: PublicRead
+      BucketName:
+        Ref: RootDomainName
+      WebsiteConfiguration:
+        ErrorDocument: 404.html
+        IndexDocument: index.html
+    Type: AWS::S3::Bucket
+  WWWBucket:
+    Properties:
+      AccessControl: BucketOwnerFullControl
+      BucketName:
+        Fn::Sub:
+        - www.${Domain}
+        - Domain:
+            Ref: RootDomainName
+      WebsiteConfiguration:
+        RedirectAllRequestsTo:
+          HostName:
+            Ref: RootBucket
+    Type: AWS::S3::Bucket
+  myDNS:
+    Properties:
+      Comment: Zone apex alias.
+      HostedZoneName:
+        Fn::Sub:
+        - ${Domain}.
+        - Domain:
+            Ref: RootDomainName
+      RecordSets:
+      - AliasTarget:
+          DNSName:
+            Fn::FindInMap:
+            - RegionMap
+            - Ref: AWS::Region
+            - websiteendpoint
+          HostedZoneId:
+            Fn::FindInMap:
+            - RegionMap
+            - Ref: AWS::Region
+            - S3hostedzoneID
+        Name:
+          Ref: RootDomainName
+        Type: A
+      - Name:
+          Fn::Sub:
+          - www.${Domain}
+          - Domain:
+              Ref: RootDomainName
+        ResourceRecords:
+        - Fn::GetAtt:
+          - WWWBucket
+          - DomainName
+        TTL: 900
+        Type: CNAME
+    Type: AWS::Route53::RecordSetGroup
+Transform: AWS::Serverless-2016-10-31
