@@ -10,6 +10,7 @@ burger_name = 'The Bounty Hunger'
 burger_ingredients = 'grilled salami / pineapple / bbq sauce / roasted garlic & onion cream cheese'
 location = '27th St'
 notification_address = '4022172224'
+category = 'Rotating'
 class TestDataAccess(unittest.TestCase):
 
     def setUp(self):
@@ -37,7 +38,7 @@ class TestDataAccess(unittest.TestCase):
         self.assertTrue(result)
     
     def test_insert_item(self):
-        result = self.data.insert_item(burger_name,burger_ingredients)
+        result = self.data.insert_item(burger_name,burger_ingredients, category)
         self.assertTrue(result)
 
     def test_set_item_availability(self):

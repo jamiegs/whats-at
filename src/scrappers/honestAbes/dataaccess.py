@@ -58,13 +58,14 @@ class DataAccess:
         pp.pprint(response)
         return True
 
-    def insert_item(self, item_name, description):
+    def insert_item(self, item_name, description, category):
         response = self.table.put_item(
         Item={
             'id': item_name,
             'sort': item_name,
             'item_name': item_name,
             'description':  description,
+            'category': category,
             'date_added': '2018-01-01'
         })
         pp.pprint(f'insert_item {response}')
