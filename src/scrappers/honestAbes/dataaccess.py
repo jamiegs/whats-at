@@ -3,6 +3,9 @@ import urllib3
 import pprint
 import boto3
 from boto3.dynamodb.conditions import Key
+import sys
+
+sys.setrecursionlimit(10000)
 pp = pprint.PrettyPrinter(indent=4)
 
 TABLE_NAME = "WhatsAt-master3"
@@ -60,14 +63,14 @@ class DataAccess:
 
     def insert_item(self, item_name, description, category):
         response = self.table.put_item(
-        Item={
-            'id': item_name,
-            'sort': item_name,
-            'item_name': item_name,
-            'description':  description,
-            'category': category,
-            'date_added': '2018-01-01'
-        })
+            Item={
+                'id': item_name,
+                'sort': item_name,
+                'item_name': item_name,
+                'description':  description,
+                'category': category,
+                'date_added': '2018-01-01'
+            })
         pp.pprint(f'insert_item {response}')
         return True
 
@@ -79,7 +82,9 @@ class DataAccess:
                             'id': item['burger_name'],
                             'sort': item['burger_name'],
                             'item_name': item['burger_name'],
-                            'description':  item['description']
+                            'description':  item['description'],
+                            'category': item['category'],
+                            'date_added': '2018-01-01'
                         }
                 )
 

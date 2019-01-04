@@ -25,7 +25,7 @@ location_pages = [
         'url': 'http://grounduprestaurants.com/honest-abes-north-27th/'
     }
 ]
-rotating_burger_selector = '#et-boc > div > div.et_pb_section.et_pb_section_4.menuToggles.et_section_regular > div.et_pb_row.et_pb_row_8.et_pb_equal_columns.et_pb_gutters1.et_pb_row_fullwidth > div.et_pb_column.et_pb_column_1_2.et_pb_column_11.et_pb_css_mix_blend_mode_passthrough > div'
+rotating_burger_selector = '#et-boc > div > div.et_pb_section.et_pb_section_4.menuToggles.et_section_regular > div.et_pb_row.et_pb_row_8.et_pb_equal_columns.et_pb_gutters1.et_pb_row_fullwidth > div.et_pb_column.et_pb_column_1_2.et_pb_column_11.et_pb_css_mix_blend_mode_passthrough > div > div'
 burger_of_week_selector = '#et-boc > div > div.et_pb_section.et_pb_section_4.menuToggles.et_section_regular > div.et_pb_row.et_pb_row_9.et_pb_equal_columns.et_pb_gutters1.et_pb_row_fullwidth > div.et_pb_column.et_pb_column_1_2.et_pb_column_13.et_pb_css_mix_blend_mode_passthrough > div > div'
 classic_burger_selector = '#et-boc > div > div.et_pb_section.et_pb_section_4.menuToggles.et_section_regular > div.et_pb_row.et_pb_row_7.et_pb_equal_columns.et_pb_gutters1.et_pb_row_fullwidth > div.et_pb_column.et_pb_column_1_2.et_pb_column_9.et_pb_css_mix_blend_mode_passthrough > div > div'
 
@@ -33,28 +33,50 @@ class Scrapper:
     def __init__(self):
         self.data = DataAccess()
 
-    def parse_burger_section(self, content, category, location):
+    def parse_category(self, content, category, location):
         burgers = list()
-        burger_name = ''
-        description_text = ''
-        for burger_children in content.descendants:
+        #pp.pprint(f'====category {category}====')
+        #pp.pprint(content)
+        #pp.pprint(f'^^^^category {category}^^^^')
+        current_burger_name = None
+        description_text = []
+
+        for burger_children in content.children:
             if 'Tag' in str(type(burger_children)):
                 if burger_children.name == 'h3':
-                    burger_name = burger_children.get_text()
+                    if burger_children.contents:
+                        if 'NavigableString' in str(type(burger_children.contents[0])):
+                            # Parse Burger Name
+                            burger_name = burger_children.contents[0]
+                            if not current_burger_name == burger_name:
+                                if current_burger_name and (not current_burger_name.isspace()) and description_text:
+                                    burgers.append({
+                                        'burger_name': current_burger_name,
+                                        'description': description_text,
+                                        'category': category,
+                                        'location': location
+                                    })
+                                current_burger_name = burger_name
+                                description_text = []
 
-                if burger_children.name == 'p': 
-                    description_text = burger_children.get_text()   
+                if burger_children.name == 'p' or burger_children.name == 'span' or burger_children.name == 'em':
+                    for description_children in burger_children.children:
+                        if 'NavigableString' in str(type(description_children)):
+                            if description_children and (not description_children.isspace()):
+                                description_text.append(description_children)
 
-                if burger_name and (not burger_name.isspace()) and description_text and (not description_text.isspace()):
-                    burgers.append({
-                        'burger_name': burger_name,
-                        'description': description_text,
-                        'category': category,
-                        'location': location
-                    })
-                    burger_name = ''
-                    description_text = ''
+                        if 'Tag' in str(type(description_children)):
+                            description_child_text = description_children.get_text()
+                            if description_child_text and (not description_child_text.isspace()):
+                                description_text.append(description_child_text)
 
+        if current_burger_name and (not current_burger_name.isspace()) and description_text:
+            burgers.append({
+                'burger_name': current_burger_name,
+                'description': description_text,
+                'category': category,
+                'location': location
+            })
         return burgers
 
     def parse_page(self, content, location):
@@ -65,28 +87,37 @@ class Scrapper:
         
         classic_burgers = soup.select(classic_burger_selector)
         for classic_burger_section in classic_burgers:
-            burgers.extend(self.parse_burger_section(classic_burger_section, 'Classic Burgers', location))
+            burgers.extend(self.parse_category(classic_burger_section, 'Classic Burgers', location))
 
         rotating_burgers = soup.select(rotating_burger_selector)
+        pp.pprint('==rotating_burgers===')
+        pp.pprint(rotating_burgers)
+        pp.pprint('^^^rotating_burgers^^^')
         for rotating_burger_section in rotating_burgers:
-            burgers.extend(self.parse_burger_section(rotating_burger_section, 'Rotating Burgers', location))
+            burgers.extend(self.parse_category(rotating_burger_section, 'Rotating Burgers', location))
         
         burger_of_week = soup.select(burger_of_week_selector)
         for burger_of_week_section in burger_of_week:
-            burgers.extend(self.parse_burger_section(burger_of_week_section, 'Burger of the Week', location))
+            burgers.extend(self.parse_category(burger_of_week_section, 'Burger of the Week', location))
    
-        print(burgers)
+        pp.pprint(burgers)
         return burgers
 
     def populate_burgers(self, url, location):
         burgers = self.read_page(url, location)
         if burgers:
-            for burger in burgers:
-                self.data.insert_item(burger['burger_name'], burger['description'], burger['category'])
-                pp.pprint(burger)
+            self.data.bulk_insert(burgers)
         else:
             print('No burgers found.')
-        
+
+    def populate_all_burgers(self):
+        for location in location_pages:
+            print(f'Reading Page {location}')
+            burgers = self.read_page(location['url'], location['locationName'])
+            if burgers:
+                self.data.bulk_insert(burgers)
+            else:
+                print(f"No burgers found for location {location['locationName']}")
 
 #    def main():
 #    #read_all_pages()
@@ -101,7 +132,7 @@ class Scrapper:
         http = urllib3.PoolManager()
         r = http.request('GET', url)
         page_content = str(r.data.decode('utf-8'))
-        print(page_content)
+        r.release_conn()
         return self.parse_page(page_content, location)
 
 #def read_file():
