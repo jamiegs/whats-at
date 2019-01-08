@@ -1,0 +1,15 @@
+{{ define "header" }} 
+{{ end }}
+
+{{ define "main" }}
+<main>
+    <div class="container">
+    {{ $totalpostscount := len (.Data.Pages) }}
+    {{ $latestpostscount := .Site.Params.latestpostscount | default $totalpostscount }}
+
+    {{ range (first $latestpostscount .Data.Pages.ByPublishDate.Reverse ) }}
+        {{ partial "post-card.html" . }}
+    {{ end }}
+    </div>
+</main>
+{{ end }}

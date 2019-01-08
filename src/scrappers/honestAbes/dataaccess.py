@@ -14,6 +14,7 @@ REGION = "us-east-1"
 class DataAccess:
     def __init__(self):
         self.dynamodb = boto3.resource('dynamodb')
+        self.dynamodb_client = boto3.client('dynamodb')
         self.table = self.dynamodb.Table(TABLE_NAME)
 
     def get_all_active_items_sorted_by_location(self):
@@ -21,6 +22,12 @@ class DataAccess:
         response = self.table.scan(
             IndexName='location-sort-index'
             )
+        pp.pprint(response)
+        return True
+
+    def get_tables(self):
+        pp.pprint("get_all_active_items_sorted_by_location")
+        response = self.dynamodb_client.list_tables()
         pp.pprint(response)
         return True
 
