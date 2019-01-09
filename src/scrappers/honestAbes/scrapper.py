@@ -35,9 +35,6 @@ class Scrapper:
 
     def parse_category(self, content, category, location):
         burgers = list()
-        #pp.pprint(f'====category {category}====')
-        #pp.pprint(content)
-        #pp.pprint(f'^^^^category {category}^^^^')
         current_burger_name = None
         description_text = []
 
@@ -114,14 +111,18 @@ class Scrapper:
         for location in location_pages:
             print(f'Reading Page {location}')
             burgers = self.read_page(location['url'], location['locationName'])
+            burgers = self.group_classics(burgers)
             if burgers:
                 self.data.bulk_insert(burgers)
             else:
                 print(f"No burgers found for location {location['locationName']}")
 
-#    def main():
-#    #read_all_pages()
-#    read_file()
+    def group_classics(self, burgers):
+        for burger in burgers:
+            if burger['category'] == 'Classic Burgers':
+                burger['location'] = 'All Locations'
+
+        return burgers
 
     def read_all_pages(self):
         for location in location_pages:
@@ -134,10 +135,3 @@ class Scrapper:
         page_content = str(r.data.decode('utf-8'))
         r.release_conn()
         return self.parse_page(page_content, location)
-
-#def read_file():
-#    filename = 'test_page.html'
-#    with open(filename) as f:
-#        content = f.read()
-#    
-#    parse_page(str(content))

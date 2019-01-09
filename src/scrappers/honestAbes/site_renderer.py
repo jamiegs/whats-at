@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from jinja2 import Template, Environment, FileSystemLoader, select_autoescape
-
+from dataaccess import DataAccess
 
 def main():
     env = Environment(
@@ -9,39 +9,12 @@ def main():
         trim_blocks=True,
         lstrip_blocks=True
     )
-    locations = [
-        {
-            'LocationName': '27th St',
-            'Categories': [
-                {
-                    "CategoryName": 'Rotating',
-                    'Items': [
-                        {
-                            'ItemName': 'Hammer Of thor',
-                            'Description': 'Food'
-                        },
-                        {
-                            'ItemName': 'Hair of the dog',
-                            'Description': 'More food'
-                        }
-                    ]
-                },
-                {
-                    'CategoryName': 'Burger Of Week',
-                    'Items': [
-                        {
-                            'ItemName': 'Louisiana Purchase',
-                            'Description': 'good food'
-                        }
-                    ]
-                }
-            ]
-        }
-    ]
+    dataAccess = DataAccess() 
+    data = dataAccess.get_formatted_location_data()
+
 
     template = env.get_template('template.html')
     print(template)
-    print(template.render(locations=locations))
-
+    print(template.render(locations=data))
 
 main()

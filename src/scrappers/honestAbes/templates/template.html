@@ -22,20 +22,19 @@
         <header>
     
         </header>
-        <msin>
+        <main>
             <div class="container">
-                {% for location in locations %}
+                {% for locationName, locationValue in locations.items()|sort() %}
                 <div class="border shadow p-3 mb-5 bg-white rounded">
                     <div class="text-center m-3">
-                            <h2 class="text-uppercase">{{ location.LocationName }}</h2>
+                            <h2 class="text-uppercase">{{ locationName }}</h2>
                     </div>
                     <div class="pl-3">
-                        {% for category in location.Categories %}
-                        <h3>{{ category.CategoryName }}</h3>
-                        {% for item in category.Items %}
+                        {% for categoryName, categoryValue in locationValue.items()|sort() %}
+                        <h3>{{ categoryName }}</h3>
+                        {% for item in categoryValue %}
                         <p>
-                            <h5>{{ item.ItemName }}</h5>
-                            {{ item.Description }}
+                            <h5>{{ item.id }}</h5>
                         </p>
                         {% endfor %}
                         {% endfor %}
@@ -43,7 +42,7 @@
                 </div>
                 {% endfor %}
             </div>
-        </msin>
+        </main>
         <footer>
             <p>
                 This site is not affiliated with Honest Abe's and was not created for profit. I'm just a hungry man that likes Abe's 

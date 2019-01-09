@@ -19,7 +19,7 @@ class TestDataAccess(unittest.TestCase):
     def test_get_tables(self):
         self.data.get_tables()
         self.assertTrue(False)
-        
+
     def test_GetAllActiveItemsSortedByLocation(self):
         result = self.data.get_all_active_items_sorted_by_location()
         self.assertTrue(result)
