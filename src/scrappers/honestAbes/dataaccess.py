@@ -41,18 +41,12 @@ class DataAccess:
             category_group = location_groups[item['location']]
             if not category_group:
                 category_group = defaultdict(list)
+
             category_group[item['category']].append(item)
             location_groups[item['location']] = category_group
 
         pp.pprint(location_groups)
         return location_groups
-#Arabian Nights
-
-    def get_item_details(self, itemNames):
-        pp.pprint("get_item_details")
-
-        return True
-
 
     def get_all_items_by_location_sorted_by_item_name(self, location):
         pp.pprint("get_all_items_by_location_sorted_by_item_name")
@@ -107,7 +101,7 @@ class DataAccess:
             for item in items:
                 burger_name = item['burger_name']
                 location = item['location']
-                description = item['description']
+                description = ' '.join(item['description'])
                 category = item['category']
                 location_sort_key = f'{burger_name}#{location}'
                 batch.put_item(
@@ -123,6 +117,7 @@ class DataAccess:
                     Item={
                         'id': burger_name,
                         'sort': location_sort_key,
+                        'description': description,
                         'category': category,
                         'location': location,
                         'date_added': current_date
