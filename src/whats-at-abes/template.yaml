@@ -1,0 +1,44 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+    whats-at-abes
+
+    Parses the Honest Abe's website creates a site with just the menu.
+
+# More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
+Globals:
+    Function:
+        Timeout: 3
+
+
+Resources:
+
+    WebScraperFunction:
+        Type: AWS::Serverless::Function
+        Properties:
+            CodeUri: web_scraper/
+            Handler: app.lambda_handler
+            Runtime: python3.7
+            Environment:
+                Variables:
+                    PARAM1: VALUE
+
+    PageRendererFunction:
+        Type: AWS::Serverless::Function
+        Properties:
+            CodeUri: page_renderer/
+            Handler: app.lambda_handler
+            Runtime: python3.7
+            Environment:
+                Variables:
+                    PARAM1: VALUE
+
+Outputs:
+
+    WebScraperFunction:
+      Description: "Web Scraper Lambda Function ARN"
+      Value: !GetAtt WebScraperFunction.Arn
+
+    PageRendererFunction:
+      Description: "Web Scraper Lambda Function ARN"
+      Value: !GetAtt PageRendererFunction.Arn
