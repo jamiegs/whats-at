@@ -1,37 +1,29 @@
 # Import Libraries
 import urllib3
+import json
 from bs4 import BeautifulSoup
 from lxml.html.soupparser import fromstring
 import pprint
-from dataaccess import DataAccess
+from web_scraper.dataaccess import DataAccess
 
 pp = pprint.PrettyPrinter(indent=4)
+location_data_file = 'location_data.json'
 
-location_pages = [
-    {
-        'locationName': 'Meadowlane',
-        'url': 'http://grounduprestaurants.com/honest-abes-meadowlane/'
-    },
-    {
-        'locationName': 'Downtown',
-        'url': 'http://grounduprestaurants.com/honest-abes-downtown/'
-    },
-    {
-        'locationName': 'Glynoaks',
-        'url': 'http://grounduprestaurants.com/honest-abes-glynoaks/'
-    },
-    {
-        'locationName': '27th St',
-        'url': 'http://grounduprestaurants.com/honest-abes-north-27th/'
-    }
-]
 rotating_burger_selector = '#et-boc > div > div.et_pb_section.et_pb_section_4.menuToggles.et_section_regular > div.et_pb_row.et_pb_row_8.et_pb_equal_columns.et_pb_gutters1.et_pb_row_fullwidth > div.et_pb_column.et_pb_column_1_2.et_pb_column_11.et_pb_css_mix_blend_mode_passthrough > div > div'
 burger_of_week_selector = '#et-boc > div > div.et_pb_section.et_pb_section_4.menuToggles.et_section_regular > div.et_pb_row.et_pb_row_9.et_pb_equal_columns.et_pb_gutters1.et_pb_row_fullwidth > div.et_pb_column.et_pb_column_1_2.et_pb_column_13.et_pb_css_mix_blend_mode_passthrough > div > div'
 classic_burger_selector = '#et-boc > div > div.et_pb_section.et_pb_section_4.menuToggles.et_section_regular > div.et_pb_row.et_pb_row_7.et_pb_equal_columns.et_pb_gutters1.et_pb_row_fullwidth > div.et_pb_column.et_pb_column_1_2.et_pb_column_9.et_pb_css_mix_blend_mode_passthrough > div > div'
 
-class Scrapper:
+class Scraper:
     def __init__(self):
         self.data = DataAccess()
+        self.location_data = None
+
+    def load_location_data(self):
+        with open(location_data_file) as f:
+            file_data = json.load(f)
+        self.location_data = file_data
+        print('File read Location data:')
+        print(self.location_data)
 
     def parse_category(self, content, category, location):
         burgers = list()
@@ -108,14 +100,15 @@ class Scrapper:
             print('No burgers found.')
 
     def populate_all_burgers(self):
-        for location in location_pages:
-            print(f'Reading Page {location}')
-            burgers = self.read_page(location['url'], location['locationName'])
-            burgers = self.group_classics(burgers)
-            if burgers:
-                self.data.bulk_insert(burgers)
-            else:
-                print(f"No burgers found for location {location['locationName']}")
+        if self.location_data:
+            for location in self.location_data:
+                print(f'Reading Page {location}')
+                burgers = self.read_page(location['url'], location['locationName'])
+                burgers = self.group_classics(burgers)
+                if burgers:
+                    self.data.bulk_insert(burgers)
+                else:
+                    print(f"No burgers found for location {location['locationName']}")
 
     def group_classics(self, burgers):
         for burger in burgers:
@@ -125,13 +118,16 @@ class Scrapper:
         return burgers
 
     def read_all_pages(self):
-        for location in location_pages:
+        for location in self.location_data:
             print(f'Reading Page {location}')
             self.read_page(location['url'], location['locationName'])
 
     def read_page(self, url, location):
         http = urllib3.PoolManager()
-        r = http.request('GET', url)
+        headers = {
+            'User-Agent': 'whatsatabes.com bot',
+        }
+        r = http.request('GET', url, headers=headers)
         page_content = str(r.data.decode('utf-8'))
         r.release_conn()
         return self.parse_page(page_content, location)

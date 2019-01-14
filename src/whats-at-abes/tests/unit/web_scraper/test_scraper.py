@@ -1,21 +1,22 @@
 from __future__ import print_function
 import unittest
 import mock
-from scrapper import Scrapper
+from web_scraper.scraper import Scraper
 import pprint
 from bs4 import BeautifulSoup
+import os 
 
 pp = pprint.PrettyPrinter(indent=4)
 
-class TestScrapper(unittest.TestCase):
+class TestScraper(unittest.TestCase):
     def setUp(self):
-        self.scrapper = Scrapper()
+        self.scraper = Scraper()
 
     def test_populate_burgers(self):
-        self.scrapper.populate_burgers('http://grounduprestaurants.com/honest-abes-meadowlane/', 'Meadowlane')
+        self.scraper.populate_burgers('http://grounduprestaurants.com/honest-abes-meadowlane/', 'Meadowlane')
 
     def test_populate_all_burgers(self):
-        self.scrapper.populate_all_burgers()
+        self.scraper.populate_all_burgers()
 
 
     def test_parse_category_rotating(self):
@@ -36,7 +37,7 @@ class TestScrapper(unittest.TestCase):
 </div>
 '''
         soup_content = BeautifulSoup(content, 'lxml')
-        burgers = self.scrapper.parse_category(soup_content.contents[0].contents[0].contents[0], 'Rotating', 'Meadowlane')
+        burgers = self.scraper.parse_category(soup_content.contents[0].contents[0].contents[0], 'Rotating', 'Meadowlane')
         self.assertTrue(burgers)
         pp.pprint(burgers)
 
@@ -80,7 +81,7 @@ class TestScrapper(unittest.TestCase):
             }
         has_aphrodite_burger = False
         soup_content = BeautifulSoup(content, 'lxml')
-        burgers = self.scrapper.parse_category(soup_content.contents[0].contents[0].contents[0], 'Classics', 'Meadowlane')
+        burgers = self.scraper.parse_category(soup_content.contents[0].contents[0].contents[0], 'Classics', 'Meadowlane')
         self.assertTrue(burgers)
 
         for burger in burgers:
@@ -98,6 +99,16 @@ class TestScrapper(unittest.TestCase):
         self.assertTrue(has_aphrodite_burger)
         self.assertTrue(has_lilkid_burger)
 
+    def test_parse_glynoaks(self):
+        dir_path = os.path.dirname(os.path.realpath(__file__))
+        print(f'Current Directory {dir_path}')
+
+        contents = self.read_file(os.path.join(dir_path, 'glynoaks.html'))
+        location = "Glynoaks",
+        items = self.scraper.parse_page(contents, location)
+
+        for item in items:
+            pp.pprint(f"{item['burger_name']} description: {item['description']} category: {item['category']} location: {item['location']}")
 
     def test_parse_page(self):
         classic_burger_Category = "Classic Burgers"
@@ -128,9 +139,14 @@ class TestScrapper(unittest.TestCase):
         contains_barkeep = False
         category_barkeep = burger_of_week_category
 
-        contents = self.read_file('test_page.html')
+        dir_path = os.path.dirname(os.path.realpath(__file__))
+        print(f'Current Directory {dir_path}')
+        test_file_path = os.path.join(dir_path, 'test_page.html')
+        print(f'Test File: {test_file_path}')
+        contents = self.read_file(test_file_path)
+
         location = "North 27th St."
-        items = self.scrapper.parse_page(contents, location)
+        items = self.scraper.parse_page(contents, location)
 
         for item in items:
 

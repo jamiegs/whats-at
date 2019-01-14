@@ -1,0 +1,26 @@
+[
+    {
+        "locationName": "Meadowlane",
+        "url": "http://grounduprestaurants.com/honest-abes-meadowlane/",
+        "directionsUrl": "https://goo.gl/maps/7x3FCCHD5Nz",
+        "anchorText": "meadowlane"
+    },
+    {
+        "locationName": "Downtown",
+        "url": "http://grounduprestaurants.com/honest-abes-downtown/",
+        "directionsUrl": "https://goo.gl/maps/u7dhfF4fdh52",
+        "anchorText": "downtown"
+    },
+    {
+        "locationName": "Glynoaks",
+        "url": "http://grounduprestaurants.com/honest-abes-glynoaks/",
+        "directionsUrl": "http://grounduprestaurants.com/honest-abes-glynoaks/",
+        "anchorText": "glynoaks"
+    },
+    {
+        "locationName": "27th St",
+        "url": "http://grounduprestaurants.com/honest-abes-north-27th/",
+        "directionsUrl": "https://goo.gl/maps/3bsTZnvrZJt",
+        "anchorText": "north27th"
+    }
+]

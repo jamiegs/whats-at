@@ -8,20 +8,10 @@ Description: >
 # More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
 Globals:
     Function:
-        Timeout: 3
+        Timeout: 20
 
 
 Resources:
-
-    WebScraperFunction:
-        Type: AWS::Serverless::Function
-        Properties:
-            CodeUri: web_scraper/
-            Handler: app.lambda_handler
-            Runtime: python3.7
-            Environment:
-                Variables:
-                    PARAM1: VALUE
 
     PageRendererFunction:
         Type: AWS::Serverless::Function
@@ -29,15 +19,38 @@ Resources:
             CodeUri: page_renderer/
             Handler: app.lambda_handler
             Runtime: python3.7
-            Environment:
-                Variables:
-                    PARAM1: VALUE
+            Policies:
+            - AWSXrayWriteOnlyAccess
+            - Statement:
+              - Sid: AllowDynamoAccess
+                Effect: Allow
+                Action:
+                    - dynamodb:Scan
+                Resource: 'arn:aws:dynamodb:us-east-1:774656682386:table/WhatsAt-master3'
+            - Statement:
+              - Sid: AllowS3Access
+                Effect: Allow
+                Action:
+                    - s3:Put*
+                Resource: arn:aws:s3:::whatsatabes.com/*
+
+    PageScraperFunction:
+        Type: AWS::Serverless::Function
+        Properties:
+            CodeUri: web_scraper/
+            Handler: app.lambda_handler
+            Runtime: python3.7
+            Policies:
+            - AWSXrayWriteOnlyAccess
+            - Statement:
+              - Sid: AllowDynamoAccess
+                Effect: Allow
+                Action:
+                    - dynamodb:Put
+                    - dynamodb:BatchWriteItem
+                Resource: 'arn:aws:dynamodb:us-east-1:774656682386:table/WhatsAt-master3'
 
 Outputs:
-
-    WebScraperFunction:
-      Description: "Web Scraper Lambda Function ARN"
-      Value: !GetAtt WebScraperFunction.Arn
 
     PageRendererFunction:
       Description: "Web Scraper Lambda Function ARN"

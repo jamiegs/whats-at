@@ -28,8 +28,10 @@
             <div class="container">
                 {% for locationName, locationValue in locations.items()|sort() %}
                 <div class="border shadow p-3 mb-5 bg-white rounded">
+                    <a name="anchorName"></a>
                     <div class="text-center m-3">
-                            <h2 class="text-uppercase">{{ locationName }}</h2>
+                        <h2 class="text-uppercase">{{ locationName }}</h2>
+                        <p><a href="{{ websiteUrl }}">Official page</a> | <a href="{{ directions }}">Directions</a></p>
                     </div>
                     <div class="pl-3">
                         {% for categoryName, categoryValue in locationValue.items()|sort() %}

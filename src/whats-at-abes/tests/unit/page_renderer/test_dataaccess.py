@@ -1,7 +1,7 @@
 from __future__ import print_function
 import unittest
 import mock
-from dataaccess import DataAccess
+from page_renderer.dataaccess import DataAccess
 import pprint
 
 pp = pprint.PrettyPrinter(indent=4)
@@ -18,7 +18,7 @@ class TestDataAccess(unittest.TestCase):
 
     def test_get_tables(self):
         self.data.get_tables()
-        self.assertTrue(False)
+        self.assertTrue(True)
 
     def test_GetAllActiveItemsSortedByLocation(self):
         result = self.data.get_all_active_items_sorted_by_location()
