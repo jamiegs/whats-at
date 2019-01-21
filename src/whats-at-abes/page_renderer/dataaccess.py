@@ -6,6 +6,7 @@ from boto3.dynamodb.conditions import Key
 import sys
 from datetime import datetime
 from collections import defaultdict
+import html
 
 sys.setrecursionlimit(10000)
 pp = pprint.PrettyPrinter(indent=4)
@@ -35,18 +36,42 @@ class DataAccess:
 
     def get_formatted_location_data(self):
         pp.pprint("get_formatted_location_data")
-        location_data = self.get_all_active_items_sorted_by_location()
         location_groups = defaultdict(list)
-        for item in location_data:
-            category_group = location_groups[item['location']]
-            if not category_group:
-                category_group = defaultdict(list)
+        item_data = self.get_all_active_items_sorted_by_location()
+        for item in item_data:
+            if 'category' in item:
+                category_group = location_groups[item['location']]
+                if not category_group:
+                    category_group = defaultdict(list)
+                escaped_description = html.escape(item['description'])
+                item['description'] = self.bold_description_labels(escaped_description)
+                category_group[item['category']].append(item)
+                location_groups[item['location']] = category_group
 
-            category_group[item['category']].append(item)
-            location_groups[item['location']] = category_group
+        locations = self.get_locations()
 
-        pp.pprint(location_groups)
-        return location_groups
+        for location in locations:
+            locationName = location['location']
+            location_categories = location_groups[locationName]
+            location['categories'] = location_categories
+
+        pp.pprint(locations)
+
+        return locations
+
+    def bold_description_labels(self, description):
+        valid_labels = [
+            'allergies:',
+            'dynamite:',
+            'dynamite sauce:',
+            'burn mix:',
+            'marley sauce:'
+        ]
+        for valid_label in valid_labels:
+            if valid_label in description:
+                description = description.replace(valid_label, f'<br /><strong>{valid_label}</strong>')
+
+        return description
 
     def get_all_items_by_location_sorted_by_item_name(self, location):
         pp.pprint("get_all_items_by_location_sorted_by_item_name")
@@ -81,6 +106,11 @@ class DataAccess:
         )
         pp.pprint(response)
         return True
+
+    def get_locations(self):
+        response = self.table.scan(IndexName='location-locationOrder-index')
+        pp.pprint(response)
+        return response['Items']
 
     def insert_item(self, item_name, description, category):
         response = self.table.put_item(

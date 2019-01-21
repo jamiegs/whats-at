@@ -96,9 +96,13 @@ class DataAccess:
         return True
 
     def bulk_insert(self, items):
+        pp.pprint('--bulk insert items--')
+        pp.pprint(items)
+        pp.pprint('^^bulk insert items^^')
         current_date = datetime.utcnow().isoformat()
         with self.table.batch_writer() as batch:
             for item in items:
+                pp.pprint(item)
                 burger_name = item['burger_name']
                 location = item['location']
                 description = ' '.join(item['description'])
@@ -124,6 +128,27 @@ class DataAccess:
                     }
                 )
 
+    def add_location(self, location):
+        pp.pprint("add_location")
+        locationName = location['locationName']
+        anchorText = location['anchorText']
+        locationOrder = location['locationOrder']
+        location_record = {
+            'id': locationName,
+            'sort': f'#{locationName}',
+            'location': locationName,
+            'anchorText': anchorText,
+            'locationOrder': locationOrder
+        }
+
+        if 'url' in location:
+            location_record['url'] = location['url']
+            location_record['directionsUrl'] = location['directionsUrl']
+
+        response = self.table.put_item(Item=location_record)
+        pp.pprint(response)
+        return True
+        
     def set_item_availability(self, item_name, location, category):
         pp.pprint("set_item_availability")
         response = self.table.put_item(

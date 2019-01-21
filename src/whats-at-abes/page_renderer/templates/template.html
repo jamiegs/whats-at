@@ -1,66 +1,87 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <!-- Global site tag (gtag.js) - Google Analytics -->
-        <script async src="https://www.googletagmanager.com/gtag/js?id=UA-131426944-1"></script>
-        <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
-    
-        gtag('config', 'UA-131426944-1');
-        </script>
-        <!-- Required meta tags -->
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-        <meta name="Description" content="Simple menu for Honest Abe's Burgers and Freedom in Lincoln, NE.">
-        <meta name="theme-color" content="#317EFB"/>
 
-        <title>What's at Abe's</title>
-        <link rel="canonical" href="https://whatsatabes.com"/>
-        <link rel="stylesheet" href="styles.css">
-        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
-    </head>
-    <body>
-        <header>
-        </header>
-        <main>
-            <div class="container">
-                {% for locationName, locationValue in locations.items()|sort() %}
-                <div class="border shadow p-3 mb-5 bg-white rounded">
-                    <a name="anchorName"></a>
-                    <div class="text-center m-3">
-                        <h2 class="text-uppercase">{{ locationName }}</h2>
-                        <p><a href="{{ websiteUrl }}">Official page</a> | <a href="{{ directions }}">Directions</a></p>
-                    </div>
-                    <div class="pl-3">
-                        {% for categoryName, categoryValue in locationValue.items()|sort() %}
-                        <h3>{{ categoryName }}</h3>
-                        {% for item in categoryValue %}
-                        <p>
-                            <h5>{{ item.id }}</h5>
-                            {{ item.description }}
-                        </p>
+<head>
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-131426944-1"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+
+        gtag('config', 'UA-131426944-1');
+    </script>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="Description" content="Simple menu for Honest Abe's Burgers and Freedom in Lincoln, NE.">
+    <meta name="theme-color" content="#317EFB" />
+
+    <title>What's at Abe's?</title>
+    <link rel="canonical" href="https://whatsatabes.com" />
+    <link rel="stylesheet" href="styles2.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS"
+        crossorigin="anonymous">
+</head>
+
+<body>
+    <header>
+        <div class="container">
+            <div class="p-2">
+                <div class="text-center">
+                    <h3>
+                        {% for location in locations | sort(attribute='locationOrder') %}
+                        <a href="#{{ location.anchorText }}">{{ location.location }}</a>{% if loop.index != loop.length
+                        %} | {% endif %}
                         {% endfor %}
-                        {% endfor %}
-                    </div>
+                    </h3>
                 </div>
-                {% endfor %}
             </div>
-        </main>
-        <footer>
-            <div class="p-3 mb-5 bg-white">
+        </div>
+    </header>
+    <main>
+        <div class="container">
+            {% for location in locations | sort(attribute='locationOrder') %}
+            <div class="border shadow p-3 mb-5 bg-white rounded">
+                <a name="{{ location.anchorText }}"></a>
+                <div class="text-center m-3">
+                    <h2 class="text-uppercase">{{ location.location }}</h2>
+                    {% if location.url is defined %}
+                    <p><a href="{{ location.url }}">Official page</a> | <a href="{{ location.directionsUrl }}">Directions</a></p>
+                    {% endif %}
+                </div>
+                <div class="pl-3">
+                    {% for categoryName, categoryValue in location.categories.items()|sort() %}
+                    <h3>{{ categoryName }}</h3>
+                    {% for item in categoryValue %}
+                    <div>
+                        <h5>{{ item.id }}</h5>
+                        <p>{{ item.description|safe }}</p>
+                    </div>
+                    {% endfor %}
+                    {% endfor %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </main>
+    <footer>
+        <div class="container">
+            <div class="ext-center p-3 mb-5 bg-white">
                 <p>
-                    This site is not affiliated with Honest Abe's and was not created for profit. I'm just a hungry man that likes Abe's 
+                    This site is not affiliated with Honest Abe's and was not created for profit. I'm just a hungry man
+                    that likes Abe's
                     burgers and wants an easier way to know what burgers are available.
                 </p>
             </div>
-            <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
-                crossorigin="anonymous"></script>
-            <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut"
-                crossorigin="anonymous"></script>
-            <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k"
-                crossorigin="anonymous"></script>
-        </footer>
-    </body>
+        </div>
+        <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+            crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut"
+            crossorigin="anonymous"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k"
+            crossorigin="anonymous"></script>
+    </footer>
+</body>
+
 </html>

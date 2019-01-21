@@ -5,7 +5,7 @@ from site_renderer import SiteRenderer
 s3_client = boto3.client('s3')
 
 S3_BUCKET = 'whatsatabes.com'
-FILENAME = 'index2.html'
+FILENAME = 'index.html'
 
 def lambda_handler(event, context):
     renderer = SiteRenderer()

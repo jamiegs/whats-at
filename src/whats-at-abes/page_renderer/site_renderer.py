@@ -2,7 +2,6 @@
 from jinja2 import Template, Environment, FileSystemLoader, select_autoescape
 from dataaccess import DataAccess
 
-
 class SiteRenderer:
     def render(self):
         env = Environment(
@@ -13,7 +12,7 @@ class SiteRenderer:
         )
         dataAccess = DataAccess()
         data = dataAccess.get_formatted_location_data()
-
+        
         template = env.get_template('template.html')
         rendered_output = template.render(locations=data)
         return rendered_output

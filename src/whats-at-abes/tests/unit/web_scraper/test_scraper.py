@@ -21,48 +21,54 @@ class TestScraper(unittest.TestCase):
 
     def test_parse_category_rotating(self):
         content = '''
-<div class="et_pb_toggle_content clearfix">
-   <p>
-      <span class="info">6oz Single $8.25<br />12oz Double $10.00<br />sub a handcrafted vegan patty for FREE <em>(contains oats)</em></span><br />brioche bun: <em>wheat / dairy</em><br />gluten free bun: <em>egg</em><br />vegan bun: <em>wheat / soy</em>
-   </p>
-   <h3>8 Second</h3>
-   <p>bbq chips / bbq sauce / bacon / jalapeño / mayonnaise / cheddar cheese<br /><em>allergies: dairy / soy / egg / fish (Worcestershire)</em></p>
-   <h3>Another Brick in the Walnut</h3>
-   <p>honey-mustard Brussels sprouts / brie / walnuts / bacon mayonnaise<br /><em>allergies: soy / egg / dairy / tree nut</em></p>
-   <h3>Morning Glory</h3>
-   <p>fried egg / Canadian bacon / maple mayonnaise / American cheese / spinach<br /><em>allergies: soy / egg / dairy</em></p>
-   <h3>Okto-lieber</h3>
-   <p><span class="TextRun SCX22916004" lang="EN-US" xml:lang="EN-US"><span class="NormalTextRun SCX22916004">bratwurst / German beer cheese / green apple sauerkraut / pretzels</span></span><br /><em>allergies: dairy / fish (Worcestershire)</em></p>
-   <h3></h3>
+<div class="et_pb_module et_pb_toggle et_pb_toggle_0 menuToggle burgersToggle et_pb_toggle_item  et_pb_toggle_close">				
+    <h5 class="et_pb_toggle_title">Rotating Burgers</h5>
+    <div class="et_pb_toggle_content clearfix">
+    <p>
+        <span class="info">6oz Single $8.25<br />12oz Double $10.00<br />sub a handcrafted vegan patty for FREE <em>(contains oats)</em></span><br />brioche bun: <em>wheat / dairy</em><br />gluten free bun: <em>egg</em><br />vegan bun: <em>wheat / soy</em>
+    </p>
+    <h3>8 Second</h3>
+    <p>bbq chips / bbq sauce / bacon / jalapeño / mayonnaise / cheddar cheese<br /><em>allergies: dairy / soy / egg / fish (Worcestershire)</em></p>
+    <h3>Another Brick in the Walnut</h3>
+    <p>honey-mustard Brussels sprouts / brie / walnuts / bacon mayonnaise<br /><em>allergies: soy / egg / dairy / tree nut</em></p>
+    <h3>Morning Glory</h3>
+    <p>fried egg / Canadian bacon / maple mayonnaise / American cheese / spinach<br /><em>allergies: soy / egg / dairy</em></p>
+    <h3>Okto-lieber</h3>
+    <p><span class="TextRun SCX22916004" lang="EN-US" xml:lang="EN-US"><span class="NormalTextRun SCX22916004">bratwurst / German beer cheese / green apple sauerkraut / pretzels</span></span><br /><em>allergies: dairy / fish (Worcestershire)</em></p>
+    <h3></h3>
+    </div>
 </div>
 '''
         soup_content = BeautifulSoup(content, 'lxml')
-        burgers = self.scraper.parse_category(soup_content.contents[0].contents[0].contents[0], 'Rotating', 'Meadowlane')
+        burgers = self.scraper.parse_category(soup_content.contents[0].contents[0].contents[0], 'Meadowlane')
         self.assertTrue(burgers)
         pp.pprint(burgers)
 
 
     def test_parse_category_classics(self):
         content = '''
-<div class="et_pb_toggle_content clearfix">
-   <p><span class="info">6oz Single $8.25<br/>12oz Double $10.00<br/>Sub a handcrafted vegan patty for FREE <em>(contains oats)</em></span><br/>brioche bun: <em>wheat / dairy</em><br/>gluten free bun: <em>egg</em><br/>vegan bun: <em>wheat / soy</em></p>
-   <h3>Greatest Burger Ever</h3>
-   <p>chopped bacon / griddled onions / awesome Sauce / American cheese / ketchup / romaine<br/><em>allergies: soy / egg / dairy</em></p>
-   <h3>The Fireside</h3>
-   <p>jalapeño / bacon / sriracha ketchup / cumin lime mayo / pepperjack cheese / romaine<br/><em>allergies: soy / egg / dairy</em></p>
-   <h3>The Aphrodite</h3>
-   <p>pickled red onions / cucumber &amp; feta yogurt sauce / tomato jam / fresh spinach<br/><em>allergies: dairy</em></p>
-   <h3>1809</h3>
-   <p>pickled apples / smoky sweet mayo / gouda cheese / chopped bacon<br/><em>allergies: soy / egg / dairy</em></p>
-   <h3>United States of America</h3>
-   <p><span class="TextRun SCX53318853" lang="EN-US" xml:lang="EN-US"><span class="NormalTextRun SCX53318853">red onion / pickles / American cheese / mayonnaise / ketchup / romaine</span></span><br/><em>allergies: dairy / soy / egg</em></p>
-   <h3>Lil’ Kids Meal<br/>$5.25</h3>
-   <p>Hamburger or Cheeseburger with fries &amp; juice</p>
+<div class="et_pb_module et_pb_toggle et_pb_toggle_0 menuToggle burgersToggle et_pb_toggle_item  et_pb_toggle_close">				
+    <h5 class="et_pb_toggle_title">Classic Burgers</h5>
+    <div class="et_pb_toggle_content clearfix">
+    <p><span class="info">6oz Single $8.25<br/>12oz Double $10.00<br/>Sub a handcrafted vegan patty for FREE <em>(contains oats)</em></span><br/>brioche bun: <em>wheat / dairy</em><br/>gluten free bun: <em>egg</em><br/>vegan bun: <em>wheat / soy</em></p>
+    <h3>Greatest Burger Ever</h3>
+    <p>chopped bacon / griddled onions / awesome Sauce / American cheese / ketchup / romaine<br/><em>allergies: soy / egg / dairy</em></p>
+    <h3>The Fireside</h3>
+    <p>jalapeño / bacon / sriracha ketchup / cumin lime mayo / pepperjack cheese / romaine<br/><em>allergies: soy / egg / dairy</em></p>
+    <h3>The Aphrodite</h3>
+    <p>pickled red onions / cucumber &amp; feta yogurt sauce / tomato jam / fresh spinach<br/><em>allergies: dairy</em></p>
+    <h3>1809</h3>
+    <p>pickled apples / smoky sweet mayo / gouda cheese / chopped bacon<br/><em>allergies: soy / egg / dairy</em></p>
+    <h3>United States of America</h3>
+    <p><span class="TextRun SCX53318853" lang="EN-US" xml:lang="EN-US"><span class="NormalTextRun SCX53318853">red onion / pickles / American cheese / mayonnaise / ketchup / romaine</span></span><br/><em>allergies: dairy / soy / egg</em></p>
+    <h3>Lil’ Kids Meal<br/>$5.25</h3>
+    <p>Hamburger or Cheeseburger with fries &amp; juice</p>
+    </div>
 </div>
 '''
         lilkid_burger = {
             'burger_name': 'Lil’ Kids Meal',
-            'category': 'Classics',
+            'category': 'Classic Burgers',
             'description': [
                 'Hamburger or Cheeseburger with fries & juice'
             ],
@@ -71,7 +77,7 @@ class TestScraper(unittest.TestCase):
         has_lilkid_burger = False
         aphrodite_burger = {
             'burger_name': 'The Aphrodite',
-            'category': 'Classics',
+            'category': 'Classic Burgers',
             'description': [
                             'pickled red onions / cucumber & feta yogurt sauce '
                             '/ tomato jam / fresh spinach',
@@ -81,7 +87,7 @@ class TestScraper(unittest.TestCase):
             }
         has_aphrodite_burger = False
         soup_content = BeautifulSoup(content, 'lxml')
-        burgers = self.scraper.parse_category(soup_content.contents[0].contents[0].contents[0], 'Classics', 'Meadowlane')
+        burgers = self.scraper.parse_category(soup_content.contents[0].contents[0].contents[0], 'Meadowlane')
         self.assertTrue(burgers)
 
         for burger in burgers:
@@ -108,12 +114,12 @@ class TestScraper(unittest.TestCase):
         items = self.scraper.parse_page(contents, location)
 
         for item in items:
-            pp.pprint(f"{item['burger_name']} description: {item['description']} category: {item['category']} location: {item['location']}")
+            pp.pprint(f"'{item['burger_name']}' description: {item['description']} category: {item['category']} location: {item['location']}")
 
     def test_parse_page(self):
         classic_burger_Category = "Classic Burgers"
         rotating_burger_category = 'Rotating Burgers'
-        burger_of_week_category = 'Burger of the Week'
+        burger_of_week_category = 'Burger of the Week!'
 
         name_greatestBurger = 'Greatest Burger Ever'
         contains_greatestBurger = False
