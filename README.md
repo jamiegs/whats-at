@@ -1,8 +1,6 @@
 # whats-at
 Monitors  restaurant/brewery websites, keeps a easily searchable list and notifies people of favorites
 
-test 123
-
 ## Includes 
 - Web Scrapper to read which burgers are at different abes locations.
 
