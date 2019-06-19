@@ -10,6 +10,7 @@ Monitors  restaurant/brewery websites, keeps a easily searchable list and notifi
 
 - Lambda function to remove email/text also.
 
+
 # Data Format
 
 Resturant items
